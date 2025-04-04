@@ -166,14 +166,14 @@ aws cognito-idp list-user-pools --max-results 60 | jq -r '.UserPools[].Id' | xar
 
 
 #delete ecr repositories
-# SERVICE_REPOS=("user" "product" "order" "rproxy")
-# for SERVICE in "${SERVICE_REPOS[@]}"; do
-#   echo "Repository [$SERVICE] checking..."
-#   REPO_EXISTS=$(aws ecr describe-repositories --repository-names "$SERVICE" --query 'repositories[0].repositoryUri' --output text)
-#   if [ "$REPO_EXISTS" == "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/$SERVICE" ]; then
-#     echo "Repository [$REPO_EXISTS] is deleting..."
-#     aws ecr delete-repository --repository-name "$SERVICE" --force | cat
-#   else
-#     echo "Repository [$SERVICE] does not exist"
-#   fi
-# done
+SERVICE_REPOS=("user" "product" "order" "rproxy")
+for SERVICE in "${SERVICE_REPOS[@]}"; do
+  echo "Repository [$SERVICE] checking..."
+  REPO_EXISTS=$(aws ecr describe-repositories --repository-names "$SERVICE" --query 'repositories[0].repositoryUri' --output text)
+  if [ "$REPO_EXISTS" == "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/$SERVICE" ]; then
+    echo "Repository [$REPO_EXISTS] is deleting..."
+    aws ecr delete-repository --repository-name "$SERVICE" --force | cat
+  else
+    echo "Repository [$SERVICE] does not exist"
+  fi
+done
